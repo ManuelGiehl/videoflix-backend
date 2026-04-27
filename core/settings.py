@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'user_app',
+    'rest_framework',
+    'auth_app',
     'video_app',
     'django_rq',
 ]
@@ -157,6 +158,14 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+EMAIL_HOST = os.environ.get("EMAIL_HOST", default="")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", default=587))
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", default="True").lower() == "true"
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", default="False").lower() == "true"
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", default="no-reply@videoflix.local")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
