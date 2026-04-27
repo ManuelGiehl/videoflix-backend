@@ -34,6 +34,9 @@ DEBUG = True
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default="localhost").split(",")
 CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", default="http://localhost:4200").split(",")
 
+FRONTEND_BASE_URL = os.environ.get("FRONTEND_BASE_URL", default="http://127.0.0.1:8000")
+EMAIL_TEST_RECIPIENT = os.environ.get("EMAIL_TEST_RECIPIENT", default="")
+
 
 # Application definition
 
@@ -66,7 +69,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

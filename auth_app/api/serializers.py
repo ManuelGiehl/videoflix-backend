@@ -8,7 +8,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "email")
+        fields = ("id", "username", "email")
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -34,4 +34,12 @@ class RegisterSerializer(serializers.Serializer):
         attrs["email"] = email
         return attrs
 
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        attrs["email"] = attrs.get("email", "").strip().lower()
+        return attrs
 
