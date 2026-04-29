@@ -43,3 +43,11 @@ class LoginSerializer(serializers.Serializer):
         attrs["email"] = attrs.get("email", "").strip().lower()
         return attrs
 
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate(self, attrs):
+        attrs["email"] = attrs.get("email", "").strip().lower()
+        return attrs
+
