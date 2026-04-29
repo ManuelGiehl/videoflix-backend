@@ -1,10 +1,10 @@
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken  # type: ignore[import-not-found]
-
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
 from ..emails import send_activation_email
 from ..utils import (
     create_activation_token,
@@ -124,5 +124,32 @@ class LogoutView(APIView):
         )
         response.delete_cookie("access_token", path="/")
         response.delete_cookie("refresh_token", path="/")
+        return response
+
+
+class TokenRefreshView(APIView):
+    def post(self, request):
+        refresh_token = request.COOKIES.get("refresh_token")
+        if not refresh_token:
+            return Response({"detail": "Refresh token missing."}, status=HTTP_400_BAD_REQUEST)
+
+        try:
+            refresh = RefreshToken(refresh_token)
+            access_token = str(refresh.access_token)
+        except TokenError:
+            return Response({"detail": "Invalid refresh token."}, status=HTTP_401_UNAUTHORIZED)
+
+        response = Response(
+            {"detail": "Token refreshed", "access": access_token},
+            status=HTTP_200_OK,
+        )
+        response.set_cookie(
+            "access_token",
+            access_token,
+            httponly=True,
+            secure=False,
+            samesite="Lax",
+            path="/",
+        )
         return response
 
