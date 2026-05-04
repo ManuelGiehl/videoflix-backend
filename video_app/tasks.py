@@ -1,3 +1,5 @@
+"""RQ tasks for video processing (HLS + thumbnails)."""
+
 import logging
 import subprocess
 
@@ -13,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 @job("default")
 def process_video(video_id: int) -> None:
+    """Convert an uploaded video into HLS variants and generate a thumbnail."""
     video = Video.objects.filter(id=video_id).first()
     if not video or video.processing_done or not video.video_file:
         return

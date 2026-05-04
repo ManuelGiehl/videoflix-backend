@@ -1,3 +1,2 @@
-from django.test import TestCase
+"""Tests for `video_app`."""
 
-# Create your tests here.

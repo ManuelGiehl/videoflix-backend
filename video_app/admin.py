@@ -1,3 +1,5 @@
+"""Admin registrations for video models."""
+
 from django.contrib import admin
 
 from .models import Video, VideoCategory

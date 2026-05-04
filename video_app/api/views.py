@@ -1,3 +1,5 @@
+"""Video API endpoints: list videos and serve HLS artifacts."""
+
 from django.http import FileResponse, Http404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -10,6 +12,7 @@ from .serializers import VideoSerializer
 
 
 def unique_by_id(videos):
+    """Return a stable list of videos deduplicated by primary key."""
     seen = set()
     unique = []
     for video in videos:
@@ -21,6 +24,8 @@ def unique_by_id(videos):
 
 
 class VideoListView(APIView):
+    """List all available videos (JWT required)."""
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -34,6 +39,8 @@ class VideoListView(APIView):
 
 
 class VideoManifestView(APIView):
+    """Serve a per-resolution HLS manifest (index.m3u8)."""
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, movie_id: int, resolution: str):
@@ -52,6 +59,8 @@ class VideoManifestView(APIView):
 
 
 class VideoSegmentView(APIView):
+    """Serve a single HLS transport stream segment (video/MP2T)."""
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, movie_id: int, resolution: str, segment: str):

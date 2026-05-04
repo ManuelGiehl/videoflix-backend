@@ -1,7 +1,11 @@
+"""Database models for video metadata and categories."""
+
 from django.db import models
 
 
 class VideoCategory(models.Model):
+    """Video category used for grouping on the dashboard."""
+
     name = models.CharField(max_length=64, unique=True)
 
     def __str__(self) -> str:
@@ -9,6 +13,8 @@ class VideoCategory(models.Model):
 
 
 class Video(models.Model):
+    """Video metadata plus processing state for HLS streaming."""
+
     created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)

@@ -1,3 +1,5 @@
+"""URL routing for the video API."""
+
 from django.urls import path
 
 from .views import VideoListView, VideoManifestView, VideoSegmentView
