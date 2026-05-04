@@ -175,6 +175,12 @@ EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", default="True").lower() == "true
 EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", default="False").lower() == "true"
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", default="no-reply@videoflix.local")
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "auth_app.authentication.CookieJWTAuthentication",
+    ),
+}
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
