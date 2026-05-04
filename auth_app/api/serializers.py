@@ -51,3 +51,13 @@ class PasswordResetRequestSerializer(serializers.Serializer):
         attrs["email"] = attrs.get("email", "").strip().lower()
         return attrs
 
+
+class PasswordConfirmSerializer(serializers.Serializer):
+    new_password = serializers.CharField(write_only=True, min_length=8)
+    confirm_password = serializers.CharField(write_only=True, min_length=8)
+
+    def validate(self, attrs):
+        if attrs.get("new_password") != attrs.get("confirm_password"):
+            raise serializers.ValidationError("Please check your input and try again.")
+        return attrs
+

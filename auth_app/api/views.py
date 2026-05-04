@@ -14,6 +14,7 @@ from ..utils import (
 )
 from .serializers import (
     LoginSerializer,
+    PasswordConfirmSerializer,
     PasswordResetRequestSerializer,
     RegisterSerializer,
     UserSerializer,
@@ -88,6 +89,26 @@ class PasswordResetRequestView(APIView):
         uidb64 = create_activation_uidb64(user.id)
         token = create_activation_token(user)
         send_password_reset_email(to_email=user.email, uidb64=uidb64, token=token)
+
+
+class PasswordConfirmView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, uidb64: str, token: str):
+        serializer = PasswordConfirmSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user_id = parse_activation_uidb64(uidb64)
+        user = User.objects.filter(id=user_id).first() if user_id else None
+        if user is None or not is_activation_token_valid(user, token):
+            return Response({"detail": "Password reset failed."}, status=HTTP_400_BAD_REQUEST)
+
+        user.set_password(serializer.validated_data["new_password"])
+        user.save(update_fields=["password"])
+        return Response(
+            {"detail": "Your Password has been successfully reset."},
+            status=HTTP_200_OK,
+        )
 
 
 class LoginView(APIView):
