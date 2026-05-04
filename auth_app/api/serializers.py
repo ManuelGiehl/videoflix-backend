@@ -1,3 +1,5 @@
+"""DRF serializers for auth endpoints."""
+
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -17,6 +19,7 @@ class RegisterSerializer(serializers.Serializer):
     confirmed_password = serializers.CharField(write_only=True, min_length=8)
 
     def validate(self, attrs):
+        """Validate register input without leaking account existence."""
         generic_error = "Please check your input and try again."
 
         password = attrs.get("password")
@@ -40,6 +43,7 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
+        """Normalize user credentials input."""
         attrs["email"] = attrs.get("email", "").strip().lower()
         return attrs
 
@@ -48,6 +52,7 @@ class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
     def validate(self, attrs):
+        """Normalize email input."""
         attrs["email"] = attrs.get("email", "").strip().lower()
         return attrs
 
@@ -57,6 +62,7 @@ class PasswordConfirmSerializer(serializers.Serializer):
     confirm_password = serializers.CharField(write_only=True, min_length=8)
 
     def validate(self, attrs):
+        """Ensure password confirmation matches."""
         if attrs.get("new_password") != attrs.get("confirm_password"):
             raise serializers.ValidationError("Please check your input and try again.")
         return attrs

@@ -1,3 +1,5 @@
+"""Email sending helpers (HTML + inline logo) for auth flows."""
+
 from email.mime.image import MIMEImage
 
 from django.conf import settings
@@ -7,10 +9,12 @@ from django.template.loader import render_to_string
 
 
 def _recipient(to_email: str) -> str:
+    """Return the actual recipient email (supports a test recipient override)."""
     return getattr(settings, "EMAIL_TEST_RECIPIENT", "") or to_email
 
 
 def _logo_bytes() -> bytes | None:
+    """Load the logo for CID embedding, or None if missing."""
     logo_path = getattr(settings, "BASE_DIR", None) / "templates" / "Logo.png"
     try:
         return logo_path.read_bytes()
@@ -19,6 +23,7 @@ def _logo_bytes() -> bytes | None:
 
 
 def _render(template_name: str, context: dict) -> str | None:
+    """Render a template or return None if it does not exist."""
     try:
         return render_to_string(template_name, context)
     except TemplateDoesNotExist:
@@ -26,6 +31,7 @@ def _render(template_name: str, context: dict) -> str | None:
 
 
 def _attach_inline_logo(message: EmailMultiAlternatives) -> None:
+    """Attach the logo as CID inline image for Gmail compatibility."""
     logo = _logo_bytes()
     if not logo:
         return
@@ -36,6 +42,7 @@ def _attach_inline_logo(message: EmailMultiAlternatives) -> None:
 
 
 def _send_html_email(*, subject: str, text: str, html: str | None, to_email: str) -> None:
+    """Send a multipart email and embed the logo when HTML is available."""
     message = EmailMultiAlternatives(
         subject=subject,
         body=text,
@@ -49,6 +56,7 @@ def _send_html_email(*, subject: str, text: str, html: str | None, to_email: str
 
 
 def send_activation_email(*, to_email: str, uidb64: str, token: str) -> None:
+    """Send the activation email containing the activation link."""
     activation_url = f"{settings.FRONTEND_BASE_URL}/api/activate/{uidb64}/{token}/"
     context = {"activation_url": activation_url, "user_name": to_email}
     html_message = _render("emails/activation_email.html", context)
@@ -61,6 +69,7 @@ def send_activation_email(*, to_email: str, uidb64: str, token: str) -> None:
 
 
 def send_password_reset_email(*, to_email: str, uidb64: str, token: str) -> None:
+    """Send a password reset email containing the reset link."""
     reset_url = f"{settings.FRONTEND_BASE_URL}/reset-password/{uidb64}/{token}/"
     context = {"reset_url": reset_url, "user_name": to_email}
     html_message = _render("emails/password_reset.html", context)

@@ -1,3 +1,5 @@
+"""DRF API views for authentication and account lifecycle endpoints."""
+
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -25,6 +27,8 @@ User = get_user_model()
 
 
 class RegisterView(APIView):
+    """Register a new user and trigger activation email."""
+
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -49,6 +53,8 @@ class RegisterView(APIView):
 
 
 class ActivateView(APIView):
+    """Activate a user account using uidb64 and token."""
+
     permission_classes = [AllowAny]
 
     def get(self, request, uidb64: str, token: str):
@@ -71,6 +77,8 @@ class ActivateView(APIView):
 
 
 class PasswordResetRequestView(APIView):
+    """Send password reset email if a user exists (no enumeration)."""
+
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -92,6 +100,8 @@ class PasswordResetRequestView(APIView):
 
 
 class PasswordConfirmView(APIView):
+    """Confirm password reset using uidb64 and token."""
+
     permission_classes = [AllowAny]
 
     def post(self, request, uidb64: str, token: str):
@@ -112,6 +122,8 @@ class PasswordConfirmView(APIView):
 
 
 class LoginView(APIView):
+    """Authenticate user and set HttpOnly JWT cookies."""
+
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -153,6 +165,8 @@ class LoginView(APIView):
 
 
 class LogoutView(APIView):
+    """Invalidate refresh token (blacklist) and clear cookies."""
+
     def post(self, request):
         refresh_token = request.COOKIES.get("refresh_token")
         if not refresh_token:
@@ -175,6 +189,8 @@ class LogoutView(APIView):
 
 
 class TokenRefreshView(APIView):
+    """Issue a new access token using the refresh_token cookie."""
+
     def post(self, request):
         refresh_token = request.COOKIES.get("refresh_token")
         if not refresh_token:
