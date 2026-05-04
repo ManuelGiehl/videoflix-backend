@@ -32,7 +32,9 @@ SECRET_KEY = os.getenv('SECRET_KEY', default='django-insecure-@#x5h3zj!g+8g1v@2^
 DEBUG = True
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default="localhost").split(",")
-CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", default="http://localhost:4200").split(",")
+CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", default="http://localhost:5500,http://127.0.0.1:5500,http://localhost:5501,http://127.0.0.1:5501",).split(",")
+CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", default="http://localhost:5500,http://127.0.0.1:5500,http://localhost:5501,http://127.0.0.1:5501",).split(",")
+CORS_ALLOW_CREDENTIALS = True
 
 FRONTEND_BASE_URL = os.environ.get("FRONTEND_BASE_URL", default="http://127.0.0.1:8000")
 EMAIL_TEST_RECIPIENT = os.environ.get("EMAIL_TEST_RECIPIENT", default="")
@@ -47,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'auth_app',
@@ -55,6 +58,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

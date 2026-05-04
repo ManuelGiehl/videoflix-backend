@@ -1,10 +1,35 @@
 <!doctype html>
 <html lang="en">
-  <body>
-    <p>Hi,</p>
-    <p>Please activate your Videoflix account by opening this link:</p>
-    <p><a href="{{ activation_url }}">{{ activation_url }}</a></p>
-    <p>If you did not request this, you can ignore this email.</p>
+  <body style="margin:0;padding:0;background:#ffffff;font-family:Arial,sans-serif;color:#111827;">
+    <div style="max-width:640px;margin:0 auto;padding:32px 24px;">
+      <img src="cid:videoflix-logo" alt="Videoflix" style="height:40px;display:block;margin:0 auto 24px auto;">
+
+      <h1 style="font-size:22px;line-height:28px;margin:0 0 18px 0;font-weight:700;">
+        Confirm your email
+      </h1>
+
+      <p style="margin:0 0 10px 0;font-size:14px;line-height:20px;">
+        Dear {{ user_name }},
+      </p>
+      <p style="margin:0 0 18px 0;font-size:14px;line-height:20px;">
+        Thank you for registering with Videoflix. To complete your registration and verify your email address, please
+        click the link below:
+      </p>
+
+      <a href="{{ activation_url }}"
+         style="display:inline-block;background:#2d3cff;color:#ffffff;text-decoration:none;padding:12px 18px;border-radius:999px;font-weight:700;font-size:14px;">
+        Activate account
+      </a>
+
+      <p style="margin:20px 0 0 0;font-size:13px;line-height:18px;color:#4b5563;">
+        If you did not create an account with us, please disregard this email.
+      </p>
+
+      <p style="margin:22px 0 0 0;font-size:13px;line-height:18px;">
+        Best regards,<br>
+        Your Videoflix Team.
+      </p>
+    </div>
   </body>
 </html>
 
