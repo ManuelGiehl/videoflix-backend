@@ -25,8 +25,8 @@ class VideoSerializer(serializers.ModelSerializer):
         return request.build_absolute_uri(obj.thumbnail.url)
 
     def get_category(self, obj: Video) -> str:
-        """Return the category name (empty string when unset)."""
+        """Return the category name (fallback to `newest` when unset)."""
         if not obj.category:
-            return ""
+            return "newest"
         return obj.category.name
 
