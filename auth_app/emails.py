@@ -57,7 +57,10 @@ def _send_html_email(*, subject: str, text: str, html: str | None, to_email: str
 
 def send_activation_email(*, to_email: str, uidb64: str, token: str) -> None:
     """Send the activation email containing the activation link."""
-    activation_url = f"{settings.FRONTEND_BASE_URL}/api/activate/{uidb64}/{token}/"
+    activation_url = (
+        f"{settings.FRONTEND_BASE_URL}/pages/auth/activate.html"
+        f"?uid={uidb64}&token={token}"
+    )
     context = {"activation_url": activation_url, "user_name": to_email}
     html_message = _render("emails/activation_email.html", context)
     _send_html_email(
@@ -70,7 +73,10 @@ def send_activation_email(*, to_email: str, uidb64: str, token: str) -> None:
 
 def send_password_reset_email(*, to_email: str, uidb64: str, token: str) -> None:
     """Send a password reset email containing the reset link."""
-    reset_url = f"{settings.FRONTEND_BASE_URL}/reset-password/{uidb64}/{token}/"
+    reset_url = (
+        f"{settings.FRONTEND_BASE_URL}/pages/auth/confirm_password.html"
+        f"?uid={uidb64}&token={token}"
+    )
     context = {"reset_url": reset_url, "user_name": to_email}
     html_message = _render("emails/password_reset.html", context)
     _send_html_email(
