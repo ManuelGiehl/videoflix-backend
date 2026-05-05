@@ -12,7 +12,7 @@ class VideoCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Video)
 class VideoAdmin(admin.ModelAdmin):
-    list_display = ("title", "category", "created_at")
+    list_display = ("title", "category", "processing_done", "created_at")
     list_filter = ("category",)
     search_fields = ("title", "description")
     readonly_fields = ("hls_root", "processing_done")
