@@ -15,3 +15,5 @@ class VideoAdmin(admin.ModelAdmin):
     list_display = ("title", "category", "created_at")
     list_filter = ("category",)
     search_fields = ("title", "description")
+    readonly_fields = ("hls_root", "processing_done")
+    fields = ("title", "description", "category", "video_file", "thumbnail", "processing_done", "hls_root")

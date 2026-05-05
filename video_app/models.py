@@ -18,7 +18,7 @@ class Video(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    video_file = models.FileField(upload_to="videos/", blank=True, null=True)
+    video_file = models.FileField(upload_to="videos/", blank=False, null=True)
     thumbnail = models.FileField(upload_to="thumbnails/", blank=True, null=True)
     hls_root = models.CharField(max_length=255, blank=True)
     processing_done = models.BooleanField(default=False)
