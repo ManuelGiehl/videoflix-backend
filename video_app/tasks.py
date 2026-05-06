@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def ensure_thumbnail(video_id: int) -> None:
     """Generate a thumbnail when it's missing (idempotent)."""
     video = Video.objects.filter(id=video_id).first()
-    if not video or not video.video_file:
+    if not video or not video.video_file or video.thumbnail:
         return
     thumb = thumbnail_path(settings.MEDIA_ROOT, video.id)
     try:
@@ -47,7 +47,12 @@ def process_video(video_id: int) -> None:
         logger.error("ffmpeg failed for video_id=%s: %s", video.id, ffmpeg_stderr(exc))
         return
 
-    video.thumbnail.name = str(thumb.relative_to(settings.MEDIA_ROOT))
+    current_thumbnail = Video.objects.filter(id=video.id).values_list("thumbnail", flat=True).first()
+    if not current_thumbnail:
+        video.thumbnail.name = str(thumb.relative_to(settings.MEDIA_ROOT))
     video.processing_done = True
-    video.save(update_fields=["hls_root", "thumbnail", "processing_done"])
+    update_fields = ["hls_root", "processing_done"]
+    if not current_thumbnail:
+        update_fields.append("thumbnail")
+    video.save(update_fields=update_fields)
    
