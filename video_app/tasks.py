@@ -14,6 +14,22 @@ logger = logging.getLogger(__name__)
 
 
 @job("default")
+def ensure_thumbnail(video_id: int) -> None:
+    """Generate a thumbnail when it's missing (idempotent)."""
+    video = Video.objects.filter(id=video_id).first()
+    if not video or not video.video_file:
+        return
+    thumb = thumbnail_path(settings.MEDIA_ROOT, video.id)
+    try:
+        generate_thumbnail(video.video_file.path, thumb)
+    except subprocess.CalledProcessError as exc:
+        logger.error("ffmpeg failed for thumbnail video_id=%s: %s", video.id, ffmpeg_stderr(exc))
+        return
+    video.thumbnail.name = str(thumb.relative_to(settings.MEDIA_ROOT))
+    video.save(update_fields=["thumbnail"])
+
+
+@job("default")
 def process_video(video_id: int) -> None:
     """Convert an uploaded video into HLS variants and generate a thumbnail."""
     video = Video.objects.filter(id=video_id).first()

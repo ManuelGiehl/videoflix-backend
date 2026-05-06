@@ -1,5 +1,6 @@
 """DRF serializers for video endpoints."""
 
+from django.core.files.storage import default_storage
 from rest_framework import serializers
 
 from ..models import Video
@@ -18,11 +19,16 @@ class VideoSerializer(serializers.ModelSerializer):
     def get_thumbnail_url(self, obj: Video) -> str:
         """Return an absolute URL for the thumbnail when possible."""
         if not obj.thumbnail:
-            return ""
+            fallback_name = f"thumbnails/{obj.id}.jpg"
+            if not default_storage.exists(fallback_name):
+                return ""
+            url = default_storage.url(fallback_name)
+        else:
+            url = obj.thumbnail.url
         request = self.context.get("request")
         if request is None:
-            return obj.thumbnail.url
-        return request.build_absolute_uri(obj.thumbnail.url)
+            return url
+        return request.build_absolute_uri(url)
 
     def get_category(self, obj: Video) -> str:
         """Return the category name (fallback to `newest` when unset)."""
